@@ -5,11 +5,7 @@
   <title>West Virginia County Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -27,7 +23,7 @@
 
     /* ---------- TOP BAR ---------- */
     header.app-header {
-      background: #1d3b8b; /* deep blue */
+      background: #1d3b8b;
       color: #ffffff;
       padding: 0.9rem 1.4rem;
       display: flex;
@@ -36,26 +32,11 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .header-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
+    .header-text { display: flex; flex-direction: column; gap: 0.15rem; }
+    .header-title { font-size: 1.25rem; font-weight: 700; }
+    .header-subtitle { font-size: 0.85rem; opacity: 0.9; }
 
-    .header-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .header-subtitle {
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
+    .header-actions { display: flex; gap: 0.5rem; }
 
     .btn {
       border: none;
@@ -77,20 +58,14 @@
       color: #ffffff;
       box-shadow: 0 1px 2px rgba(0,0,0,0.25);
     }
-
-    .btn-primary:hover {
-      background: #1d4ed8;
-    }
+    .btn-primary:hover { background: #1d4ed8; }
 
     .btn-secondary {
       background: #f59e0b;
       color: #111827;
       box-shadow: 0 1px 2px rgba(0,0,0,0.25);
     }
-
-    .btn-secondary:hover {
-      background: #d97706;
-    }
+    .btn-secondary:hover { background: #d97706; }
 
     .btn:active {
       transform: translateY(1px);
@@ -112,7 +87,7 @@
       }
     }
 
-    /* ---------- LEFT PANEL (COUNTIES) ---------- */
+    /* ---------- LEFT PANEL ---------- */
     .sidebar {
       background: #f9fafb;
       border-right: 1px solid #d1d5db;
@@ -138,6 +113,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 0.75rem 0.75rem 1.25rem;
+      -webkit-overflow-scrolling: touch;
     }
 
     .county-label {
@@ -165,6 +141,13 @@
       background: #e0f2fe;
       border-color: #60a5fa;
       z-index: 20;
+    }
+
+    .county-list::-webkit-scrollbar { width: 8px; }
+    .county-list::-webkit-scrollbar-track { background: #f3f4f6; }
+    .county-list::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 999px;
     }
 
     /* ---------- MAP AREA ---------- */
@@ -197,23 +180,14 @@
     .map-wrapper {
       position: relative;
       flex: 1;
-      background: #fee2e2; /* pale red like your screenshot */
+      background-color: #fee2e2; /* pale red like screenshot */
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-    }
-
-    .map-wrapper.map-error {
-      background: #fee2e2;
-    }
-
-    #map-image {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: none; /* hidden until user uploads a map */
-      pointer-events: none;
     }
 
     .map-message {
@@ -224,11 +198,10 @@
       pointer-events: none;
     }
 
-    /* overlay for positioned labels on top of map */
     #label-overlay {
       position: absolute;
       inset: 0;
-      pointer-events: none; /* children will re-enable */
+      pointer-events: none;
     }
 
     #label-overlay .county-label {
@@ -238,7 +211,6 @@
       min-width: 80px;
     }
 
-    /* little floating handle bottom-right (just decorative) */
     .map-handle {
       position: absolute;
       right: 0.75rem;
@@ -258,11 +230,7 @@
       pointer-events: none;
     }
 
-    .map-handle-dot-row {
-      display: flex;
-      gap: 2px;
-    }
-
+    .map-handle-dot-row { display: flex; gap: 2px; }
     .map-handle-dot,
     .map-handle-square {
       width: 4px;
@@ -270,11 +238,7 @@
       border-radius: 1px;
       background: #d1d5db;
     }
-
-    .map-handle-square {
-      width: 7px;
-      height: 7px;
-    }
+    .map-handle-square { width: 7px; height: 7px; }
 
     .map-handle-corner {
       width: 10px;
@@ -283,18 +247,6 @@
       border: 1px dashed #d1d5db;
       border-bottom: 2px solid #9ca3af;
       border-right: 2px solid #9ca3af;
-    }
-
-    /* scrollbars a bit nicer */
-    .county-list::-webkit-scrollbar {
-      width: 8px;
-    }
-    .county-list::-webkit-scrollbar-track {
-      background: #f3f4f6;
-    }
-    .county-list::-webkit-scrollbar-thumb {
-      background: #d1d5db;
-      border-radius: 999px;
     }
   </style>
 </head>
@@ -307,18 +259,9 @@
       <div class="header-subtitle">Drag labels or upload your own map.</div>
     </div>
     <div class="header-actions">
-      <button id="upload-btn" class="btn btn-primary">
-        📷 Upload Map
-      </button>
-      <button id="reset-btn" class="btn btn-secondary">
-        🔄 Reset Labels
-      </button>
-      <input
-        id="map-upload-input"
-        type="file"
-        accept="image/*"
-        style="display: none"
-      />
+      <button id="upload-btn" class="btn btn-primary">📷 Upload Map</button>
+      <button id="reset-btn" class="btn btn-secondary">🔄 Reset Labels</button>
+      <input id="map-upload-input" type="file" accept="image/*" style="display:none" />
     </div>
   </header>
 
@@ -331,7 +274,6 @@
         Drag a county name onto the map. Touch or mouse works.
       </div>
       <div id="label-list" class="county-list">
-        <!-- County labels -->
         <div class="county-label">Barbour</div>
         <div class="county-label">Berkeley</div>
         <div class="county-label">Boone</div>
@@ -394,14 +336,9 @@
     <section class="map-area">
       <div class="map-card">
         <div class="map-header">Map Area</div>
-        <div id="map-wrapper" class="map-wrapper map-error">
-          <img
-            id="map-image"
-            alt="Map"
-          />
+        <div id="map-wrapper" class="map-wrapper">
           <div id="map-message" class="map-message">
-            Map Image Failed to Load. Please upload a map image using the
-            "Upload Map" button.
+            Map image not set. Use the "Upload Map" button above to choose a map image.
           </div>
           <div id="label-overlay"></div>
 
@@ -428,7 +365,6 @@
     const uploadBtn = document.getElementById("upload-btn");
     const resetBtn = document.getElementById("reset-btn");
     const fileInput = document.getElementById("map-upload-input");
-    const mapImage = document.getElementById("map-image");
     const mapMessage = document.getElementById("map-message");
 
     let activeLabel = null;
@@ -446,27 +382,16 @@
         alert("Please select an image file.");
         return;
       }
-
       const reader = new FileReader();
       reader.onload = (ev) => {
-        mapImage.src = ev.target.result;
-        mapImage.style.display = "block";
-        mapWrapper.classList.remove("map-error");
+        mapWrapper.style.backgroundImage = `url(${ev.target.result})`;
         mapMessage.textContent = "";
       };
       reader.readAsDataURL(file);
     });
 
-    mapImage.addEventListener("error", () => {
-      mapImage.style.display = "none";
-      mapWrapper.classList.add("map-error");
-      mapMessage.textContent =
-        "Map Image Failed to Load. Please upload a different image.";
-    });
-
     // ---------- DRAGGABLE LABELS ----------
     function makeDraggable(label) {
-      // pointerdown: start drag
       label.addEventListener("pointerdown", (event) => {
         activeLabel = label;
         pointerId = event.pointerId;
@@ -477,7 +402,6 @@
         offsetX = event.clientX - rect.left;
         offsetY = event.clientY - rect.top;
 
-        // If label is still in the sidebar, move it to overlay so it sits on top of map
         if (label.parentElement !== labelOverlay) {
           const mapRect = mapWrapper.getBoundingClientRect();
           const x = event.clientX - mapRect.left - offsetX;
@@ -490,7 +414,6 @@
         }
       });
 
-      // prevent touch scroll while grabbing
       label.addEventListener(
         "touchstart",
         (e) => {
@@ -504,11 +427,9 @@
       if (!activeLabel || event.pointerId !== pointerId) return;
 
       const mapRect = mapWrapper.getBoundingClientRect();
-      // position inside map container
       let x = event.clientX - mapRect.left - offsetX;
       let y = event.clientY - mapRect.top - offsetY;
 
-      // clamp so labels don't vanish far off-screen
       const maxX = mapRect.width - activeLabel.offsetWidth;
       const maxY = mapRect.height - activeLabel.offsetHeight;
       x = Math.max(0, Math.min(x, maxX));
@@ -526,7 +447,6 @@
       pointerId = null;
     }
 
-    // Attach drag behavior to all labels
     document.querySelectorAll(".county-label").forEach(makeDraggable);
 
     window.addEventListener("pointermove", handlePointerMove);
